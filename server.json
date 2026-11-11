@@ -1,0 +1,30 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.bartenderthiago82/weblens",
+  "title": "WebLens",
+  "description": "Web pages as clean Markdown, links, metadata or schema JSON. Pay per call in USDC on Base (x402).",
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "x402-weblens-mcp",
+      "version": "1.0.0",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        {
+          "name": "WEBLENS_WALLET_PRIVATE_KEY",
+          "description": "Private key of a separate wallet holding a few dollars of USDC on Base; signs each payment locally",
+          "isRequired": true,
+          "isSecret": true,
+          "format": "string"
+        },
+        {
+          "name": "WEBLENS_MAX_SPEND_USD",
+          "description": "Most the server may spend per session, in USD (default 1)",
+          "isRequired": false,
+          "format": "string"
+        }
+      ]
+    }
+  ]
+}
