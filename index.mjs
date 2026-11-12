@@ -21,7 +21,7 @@ if (!account) console.error(NO_KEY);
 const budget = makeBudgetPolicy(BUDGET);
 const payFetch = account && wrapFetchWithPaymentFromConfig(fetch, {
   schemes: [{ network: NETWORK, client: new ExactEvmScheme(account) }],
-  spendControls: { maxAmountPerPayment: "$0.05" }, // no single WebLens call costs more than $0.02
+  spendControls: { maxAmountPerPayment: "$0.05" }, // no single WebLens call costs more than $0.05
   policies: [budget.policy],
 });
 
@@ -41,7 +41,7 @@ async function call(path, init) {
 const fail = (msg) => ({ content: [{ type: "text", text: msg }], isError: true });
 const get = (route, url) => call(`${route}?url=${encodeURIComponent(url)}`);
 
-const server = new McpServer({ name: "weblens", version: "1.1.1" });
+const server = new McpServer({ name: "weblens", version: "1.2.0" });
 const url = z.string().url().describe("Public http(s) URL of the page");
 
 server.registerTool("weblens_metadata", {
@@ -84,6 +84,19 @@ server.registerTool("rugprobe_check", {
     "Automated on-chain heuristics, not financial advice. Costs $0.01 USDC.",
   inputSchema: { address: z.string().regex(/^0x[0-9a-fA-F]{40}$/).describe("Token contract address on Base (0x...)") },
 }, ({ address }) => call(`/v1/token-safety?address=${address}`));
+
+server.registerTool("rugprobe_report", {
+  title: "RugProbe Report: token due diligence ($0.05)",
+  description:
+    "Full due diligence on a Base token in one call: everything rugprobe_check does, plus the project's website " +
+    "(does it really list this contract? fake-site check, domain age, socials), a clear/caution/avoid verdict, " +
+    "a 0-100 risk score and a short summary. Automated risk signals, not financial advice. Costs $0.05 USDC.",
+  inputSchema: {
+    address: z.string().regex(/^0x[0-9a-fA-F]{40}$/).describe("Token contract address on Base (0x...)"),
+    website: url.optional().describe("The project's official website (optional, enables the website checks)"),
+  },
+}, ({ address, website }) =>
+  call(`/v1/token-report?address=${address}${website ? `&website=${encodeURIComponent(website)}` : ""}`));
 
 await server.connect(new StdioServerTransport());
 console.error(account

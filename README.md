@@ -9,6 +9,7 @@ Give Claude, Cursor or any MCP client four tools for reading the web, plus **Rug
 | `weblens_extract` | Main content as clean Markdown (no ads, menus or popups) | $0.005 |
 | `weblens_structure` | JSON that follows your JSON Schema, from a URL or text | $0.02 |
 | `rugprobe_check` | **RugProbe**: is this Base token safe to trade? Simulated buy/sell (honeypot, real taxes), liquidity, owner powers, 0-100 risk score | $0.01 |
+| `rugprobe_report` | **RugProbe Report**: everything above plus the project website (does it list this contract? domain age, socials), a clear/caution/avoid verdict and a short summary | $0.05 |
 
 ## Setup
 
