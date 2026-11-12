@@ -2,14 +2,16 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.bartenderthiago82/weblens",
   "title": "WebLens",
-  "description": "Web pages as clean Markdown, links, metadata or schema JSON. Pay per call in USDC on Base (x402).",
-  "version": "1.0.0",
+  "description": "Web pages as clean data, plus RugProbe Base token safety checks. Pay per call in USDC (x402).",
+  "version": "1.1.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "x402-weblens-mcp",
-      "version": "1.0.0",
-      "transport": { "type": "stdio" },
+      "version": "1.1.0",
+      "transport": {
+        "type": "stdio"
+      },
       "environmentVariables": [
         {
           "name": "WEBLENS_WALLET_PRIVATE_KEY",
@@ -26,5 +28,9 @@
         }
       ]
     }
-  ]
+  ],
+  "repository": {
+    "url": "https://github.com/bartenderthiago82/x402-weblens-mcp",
+    "source": "github"
+  }
 }

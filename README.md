@@ -1,6 +1,6 @@
 # WebLens MCP
 
-Give Claude, Cursor or any MCP client four tools for reading the web. Each call is paid in USDC on Base via [x402](https://x402.org). There is no account, no API key and no subscription.
+Give Claude, Cursor or any MCP client four tools for reading the web, plus **RugProbe** to check a Base token before trading. Each call is paid in USDC on Base via [x402](https://x402.org). There is no account, no API key and no subscription.
 
 | Tool | What it returns | Price |
 |---|---|---|
@@ -8,6 +8,7 @@ Give Claude, Cursor or any MCP client four tools for reading the web. Each call 
 | `weblens_links` | All links, split into internal and external | $0.002 |
 | `weblens_extract` | Main content as clean Markdown (no ads, menus or popups) | $0.005 |
 | `weblens_structure` | JSON that follows your JSON Schema, from a URL or text | $0.02 |
+| `rugprobe_check` | **RugProbe**: is this Base token safe to trade? Simulated buy/sell (honeypot, real taxes), liquidity, owner powers, 0-100 risk score | $0.01 |
 
 ## Setup
 

@@ -1,20 +1,48 @@
 {
   "name": "x402-weblens-mcp",
-  "version": "1.0.0",
-  "description": "MCP server that lets AI assistants read web pages as clean data, paying per call in USDC on Base via x402.",
+  "version": "1.1.0",
+  "description": "MCP server for AI agents: read web pages as clean data and check Base tokens for rug pulls (RugProbe), paying per call in USDC via x402.",
   "mcpName": "io.github.bartenderthiago82/weblens",
   "type": "module",
-  "bin": { "x402-weblens-mcp": "index.mjs" },
-  "files": ["index.mjs", "budget.mjs", "README.md"],
-  "scripts": { "start": "node index.mjs", "test": "node --test" },
-  "keywords": ["mcp", "x402", "web-scraping", "markdown", "ai-agents", "base", "usdc"],
+  "bin": {
+    "x402-weblens-mcp": "index.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "budget.mjs",
+    "README.md"
+  ],
+  "scripts": {
+    "start": "node index.mjs",
+    "test": "node --test"
+  },
+  "keywords": [
+    "mcp",
+    "x402",
+    "web-scraping",
+    "markdown",
+    "ai-agents",
+    "base",
+    "usdc",
+    "crypto",
+    "token-security",
+    "honeypot",
+    "rug-pull",
+    "rugprobe"
+  ],
   "license": "MIT",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2",
     "@x402/evm": "^2.30.0",
     "@x402/fetch": "^2.30.0",
     "viem": "^2.57.17",
     "zod": "^4.6.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bartenderthiago82/x402-weblens-mcp.git"
   }
 }

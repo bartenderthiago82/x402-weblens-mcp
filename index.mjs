@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// WebLens MCP server: gives AI assistants 4 web-reading tools, paid per call in USDC on Base via x402.
+// WebLens MCP server: gives AI assistants 4 web-reading tools plus the RugProbe token check, paid per call in USDC on Base via x402.
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
@@ -42,7 +42,7 @@ async function call(path, init) {
 const fail = (msg) => ({ content: [{ type: "text", text: msg }], isError: true });
 const get = (route, url) => call(`${route}?url=${encodeURIComponent(url)}`);
 
-const server = new McpServer({ name: "weblens", version: "1.0.0" });
+const server = new McpServer({ name: "weblens", version: "1.1.0" });
 const url = z.string().url().describe("Public http(s) URL of the page");
 
 server.registerTool("weblens_metadata", {
@@ -76,6 +76,15 @@ server.registerTool("weblens_structure", {
   if (!args.url && !args.text) return fail("Send either 'url' or 'text'.");
   return call("/v1/structure", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(args) });
 });
+
+server.registerTool("rugprobe_check", {
+  title: "RugProbe token safety check ($0.01)",
+  description:
+    "Check an ERC-20 token on Base before trading: simulated buy and sell (honeypot, real buy/sell tax), liquidity, " +
+    "LP burn, owner powers (mint, blacklist, fees, pause), upgradeable proxy, and a 0-100 risk score. " +
+    "Automated on-chain heuristics, not financial advice. Costs $0.01 USDC.",
+  inputSchema: { address: z.string().regex(/^0x[0-9a-fA-F]{40}$/).describe("Token contract address on Base (0x...)") },
+}, ({ address }) => call(`/v1/token-safety?address=${address}`));
 
 await server.connect(new StdioServerTransport());
 console.error(`WebLens MCP ready. Paying from ${account.address} on ${NETWORK}, session limit $${BUDGET}.`);
