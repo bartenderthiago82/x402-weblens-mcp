@@ -14,20 +14,19 @@ const BUDGET = process.env.WEBLENS_MAX_SPEND_USD ?? "1";
 const key = process.env.WEBLENS_WALLET_PRIVATE_KEY;
 
 // stdout is the MCP channel, so all messages go to stderr.
-if (!key || !/^0x[0-9a-fA-F]{64}$/.test(key)) {
-  console.error("WEBLENS_WALLET_PRIVATE_KEY is missing or invalid. Use a separate wallet holding only a few dollars of USDC on Base.");
-  process.exit(1);
-}
-
-const account = privateKeyToAccount(key);
+// Without a valid key the server still starts (so clients and directories can list the tools), but every call is refused.
+const NO_KEY = "WEBLENS_WALLET_PRIVATE_KEY is missing or invalid. Use a separate wallet holding only a few dollars of USDC on Base.";
+const account = key && /^0x[0-9a-fA-F]{64}$/.test(key) ? privateKeyToAccount(key) : null;
+if (!account) console.error(NO_KEY);
 const budget = makeBudgetPolicy(BUDGET);
-const payFetch = wrapFetchWithPaymentFromConfig(fetch, {
+const payFetch = account && wrapFetchWithPaymentFromConfig(fetch, {
   schemes: [{ network: NETWORK, client: new ExactEvmScheme(account) }],
   spendControls: { maxAmountPerPayment: "$0.05" }, // no single WebLens call costs more than $0.02
   policies: [budget.policy],
 });
 
 async function call(path, init) {
+  if (!payFetch) return fail(NO_KEY);
   let res;
   try {
     res = await payFetch(`${API}${path}`, init);
@@ -42,7 +41,7 @@ async function call(path, init) {
 const fail = (msg) => ({ content: [{ type: "text", text: msg }], isError: true });
 const get = (route, url) => call(`${route}?url=${encodeURIComponent(url)}`);
 
-const server = new McpServer({ name: "weblens", version: "1.1.0" });
+const server = new McpServer({ name: "weblens", version: "1.1.1" });
 const url = z.string().url().describe("Public http(s) URL of the page");
 
 server.registerTool("weblens_metadata", {
@@ -87,4 +86,6 @@ server.registerTool("rugprobe_check", {
 }, ({ address }) => call(`/v1/token-safety?address=${address}`));
 
 await server.connect(new StdioServerTransport());
-console.error(`WebLens MCP ready. Paying from ${account.address} on ${NETWORK}, session limit $${BUDGET}.`);
+console.error(account
+  ? `WebLens MCP ready. Paying from ${account.address} on ${NETWORK}, session limit $${BUDGET}.`
+  : "WebLens MCP ready, but no wallet: calls are refused until WEBLENS_WALLET_PRIVATE_KEY is set.");
