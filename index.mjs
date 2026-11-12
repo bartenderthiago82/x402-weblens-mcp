@@ -41,7 +41,7 @@ async function call(path, init) {
 const fail = (msg) => ({ content: [{ type: "text", text: msg }], isError: true });
 const get = (route, url) => call(`${route}?url=${encodeURIComponent(url)}`);
 
-const server = new McpServer({ name: "weblens", version: "1.2.0" });
+const server = new McpServer({ name: "weblens", version: "1.3.0" });
 const url = z.string().url().describe("Public http(s) URL of the page");
 
 server.registerTool("weblens_metadata", {
@@ -97,6 +97,48 @@ server.registerTool("rugprobe_report", {
   },
 }, ({ address, website }) =>
   call(`/v1/token-report?address=${address}${website ? `&website=${encodeURIComponent(website)}` : ""}`));
+
+const post = (route, body) => call(route, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+
+server.registerTool("rugprobe_position_size", {
+  title: "Position size & ATR stop ($0.002)",
+  description: "Position size and stop-loss from account risk: give price bars (high/low/close, oldest first) or an ATR plus entry, the account size and risk %. Returns Wilder ATR, stop price, units and position value. Math only, not financial advice. Costs $0.002 USDC.",
+  inputSchema: {
+    accountSize: z.number().positive().describe("Account size"),
+    riskPct: z.number().positive().max(100).describe("Percent of the account to risk, e.g. 1"),
+    bars: z.array(z.object({ high: z.number(), low: z.number(), close: z.number() })).max(5000).optional().describe("Price bars, oldest first"),
+    atr: z.number().nonnegative().optional().describe("ATR, if you already have it (then also send entry)"),
+    entry: z.number().positive().optional().describe("Entry price (default: last close)"),
+    period: z.number().int().min(1).max(500).optional().describe("ATR period (default 14)"),
+    multiplier: z.number().positive().max(20).optional().describe("Stop distance in ATRs (default 2)"),
+    side: z.enum(["long", "short"]).optional(),
+  },
+}, (args) => post("/v1/position-size", args));
+
+server.registerTool("rugprobe_gas", {
+  title: "Base gas advisor ($0.002)",
+  description: "Should I submit a Base transaction now or wait? Returns next base fee, block fullness, slow/normal/fast EIP-1559 fee suggestions and the estimated USD cost of a transfer and a swap. Costs $0.002 USDC.",
+  inputSchema: {},
+}, () => call("/v1/gas"));
+
+server.registerTool("weblens_csv_to_json", {
+  title: "CSV to typed JSON ($0.002)",
+  description: "Convert CSV text to JSON rows with snake_case keys and a detected type per column (integer, number, boolean, date, datetime, string). Delimiter is auto-detected. Costs $0.002 USDC.",
+  inputSchema: {
+    csv: z.string().min(1).max(90_000).describe("CSV text"),
+    delimiter: z.string().length(1).optional().describe("Optional delimiter"),
+    header: z.boolean().optional().describe("First row is the header (default true)"),
+  },
+}, (args) => post("/v1/csv-to-json", args));
+
+server.registerTool("weblens_json_repair", {
+  title: "Repair & validate JSON ($0.002)",
+  description: "Fix broken JSON (code fences, comments, single quotes, bare keys, trailing commas, Python literals, cut-off endings) and optionally validate it against a JSON Schema (no regex patterns). Costs $0.002 USDC.",
+  inputSchema: {
+    text: z.string().min(1).max(90_000).describe("The broken JSON text"),
+    schema: z.record(z.string(), z.any()).optional().describe("Optional JSON Schema to validate against"),
+  },
+}, (args) => post("/v1/json-repair", args));
 
 await server.connect(new StdioServerTransport());
 console.error(account

@@ -10,6 +10,10 @@ Give Claude, Cursor or any MCP client four tools for reading the web, plus **Rug
 | `weblens_structure` | JSON that follows your JSON Schema, from a URL or text | $0.02 |
 | `rugprobe_check` | **RugProbe**: is this Base token safe to trade? Simulated buy/sell (honeypot, real taxes), liquidity, owner powers, 0-100 risk score | $0.01 |
 | `rugprobe_report` | **RugProbe Report**: everything above plus the project website (does it list this contract? domain age, socials), a clear/caution/avoid verdict and a short summary | $0.05 |
+| `rugprobe_position_size` | Stop-loss and position size from account risk % and ATR | $0.002 |
+| `rugprobe_gas` | Base gas advisor: submit now or wait, fee suggestions, USD cost | $0.002 |
+| `weblens_csv_to_json` | CSV to typed JSON rows (snake_case keys, column types) | $0.002 |
+| `weblens_json_repair` | Fix broken LLM JSON and validate it against a schema | $0.002 |
 
 ## Setup
 

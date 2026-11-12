@@ -1,6 +1,6 @@
 {
   "name": "x402-weblens-mcp",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "MCP server for AI agents: read web pages as clean data and check Base tokens for rug pulls (RugProbe), paying per call in USDC via x402.",
   "mcpName": "io.github.bartenderthiago82/weblens",
   "type": "module",
