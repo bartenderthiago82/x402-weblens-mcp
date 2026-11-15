@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// WebLens MCP server: gives AI assistants 4 web-reading tools plus the RugProbe token check, paid per call in USDC on Base via x402.
+// WebLens MCP server: gives AI assistants web-reading and utility tools plus the RugProbe token check, paid per call in USDC on Base via x402.
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
@@ -41,7 +41,7 @@ async function call(path, init) {
 const fail = (msg) => ({ content: [{ type: "text", text: msg }], isError: true });
 const get = (route, url) => call(`${route}?url=${encodeURIComponent(url)}`);
 
-const server = new McpServer({ name: "weblens", version: "1.3.0" });
+const server = new McpServer({ name: "weblens", version: "1.4.0" });
 const url = z.string().url().describe("Public http(s) URL of the page");
 
 server.registerTool("weblens_metadata", {
@@ -139,6 +139,26 @@ server.registerTool("weblens_json_repair", {
     schema: z.record(z.string(), z.any()).optional().describe("Optional JSON Schema to validate against"),
   },
 }, (args) => post("/v1/json-repair", args));
+
+server.registerTool("weblens_qr", {
+  title: "QR code ($0.002)",
+  description: "Turn any text, URL, Wi-Fi string or payment link into a QR code, returned as SVG markup or a base64 PNG. Costs $0.002 USDC.",
+  inputSchema: {
+    text: z.string().min(1).max(2000).describe("Text or URL to encode"),
+    format: z.enum(["svg", "png"]).optional().describe("Output format (default svg)"),
+    size: z.number().int().min(64).max(2048).optional().describe("Width in pixels (default 512)"),
+    ecc: z.enum(["L", "M", "Q", "H"]).optional().describe("Error correction level (default M)"),
+  },
+}, (args) => call(`/v1/qr?${new URLSearchParams(Object.entries(args).filter(([, v]) => v !== undefined).map(([k, v]) => [k, String(v)]))}`));
+
+server.registerTool("weblens_wiki_summary", {
+  title: "Wikipedia summary ($0.002)",
+  description: "Short Wikipedia summary of any topic in any Wikipedia language: title, description, intro paragraph, article URL, thumbnail and CC BY-SA attribution. Finds the closest article if the topic is not an exact title. Costs $0.002 USDC.",
+  inputSchema: {
+    topic: z.string().min(1).max(300).describe("Topic or article title"),
+    lang: z.string().regex(/^[a-z]{2,3}(-[a-z]{2,8})?$/).optional().describe("Wikipedia language code: en, pt, es, de... (default en)"),
+  },
+}, ({ topic, lang }) => call(`/v1/wiki-summary?topic=${encodeURIComponent(topic)}${lang ? `&lang=${lang}` : ""}`));
 
 await server.connect(new StdioServerTransport());
 console.error(account

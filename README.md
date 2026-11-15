@@ -1,6 +1,6 @@
 # WebLens MCP
 
-Give Claude, Cursor or any MCP client four tools for reading the web, plus **RugProbe** to check a Base token before trading. Each call is paid in USDC on Base via [x402](https://x402.org). There is no account, no API key and no subscription.
+Give Claude, Cursor or any MCP client tools for reading the web, QR codes, Wikipedia summaries and data cleanup, plus **RugProbe** to check a Base token before trading. Each call is paid in USDC on Base via [x402](https://x402.org). There is no account, no API key and no subscription.
 
 | Tool | What it returns | Price |
 |---|---|---|
@@ -14,6 +14,8 @@ Give Claude, Cursor or any MCP client four tools for reading the web, plus **Rug
 | `rugprobe_gas` | Base gas advisor: submit now or wait, fee suggestions, USD cost | $0.002 |
 | `weblens_csv_to_json` | CSV to typed JSON rows (snake_case keys, column types) | $0.002 |
 | `weblens_json_repair` | Fix broken LLM JSON and validate it against a schema | $0.002 |
+| `weblens_qr` | QR code from any text or URL, as SVG or PNG | $0.002 |
+| `weblens_wiki_summary` | Wikipedia summary of any topic, any language, with attribution | $0.002 |
 
 ## Setup
 

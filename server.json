@@ -3,12 +3,12 @@
   "name": "io.github.bartenderthiago82/weblens",
   "title": "WebLens",
   "description": "Web pages as clean data, plus RugProbe Base token safety checks. Pay per call in USDC (x402).",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "x402-weblens-mcp",
-      "version": "1.3.0",
+      "version": "1.4.0",
       "transport": {
         "type": "stdio"
       },
