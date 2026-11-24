@@ -41,7 +41,7 @@ async function call(path, init) {
 const fail = (msg) => ({ content: [{ type: "text", text: msg }], isError: true });
 const get = (route, url) => call(`${route}?url=${encodeURIComponent(url)}`);
 
-const server = new McpServer({ name: "weblens", version: "1.4.0" });
+const server = new McpServer({ name: "weblens", version: "1.5.0" });
 const url = z.string().url().describe("Public http(s) URL of the page");
 
 server.registerTool("weblens_metadata", {
@@ -159,6 +159,15 @@ server.registerTool("weblens_wiki_summary", {
     lang: z.string().regex(/^[a-z]{2,3}(-[a-z]{2,8})?$/).optional().describe("Wikipedia language code: en, pt, es, de... (default en)"),
   },
 }, ({ topic, lang }) => call(`/v1/wiki-summary?topic=${encodeURIComponent(topic)}${lang ? `&lang=${lang}` : ""}`));
+
+server.registerTool("weblens_nft", {
+  title: "NFT lookup on Base ($0.002)",
+  description: "Look up one NFT on Base: current owner, collection name and symbol, ERC-721 or ERC-1155, token URI and metadata (name, description, image, attributes). IPFS and Arweave links come back as https. Costs $0.002 USDC.",
+  inputSchema: {
+    contract: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("NFT contract address on Base"),
+    tokenId: z.string().regex(/^[0-9]{1,78}$/).describe("Token id as a decimal number"),
+  },
+}, ({ contract, tokenId }) => call(`/v1/nft?${new URLSearchParams({ contract, tokenId })}`));
 
 await server.connect(new StdioServerTransport());
 console.error(account

@@ -1,6 +1,6 @@
 # WebLens MCP
 
-Give Claude, Cursor or any MCP client tools for reading the web, QR codes, Wikipedia summaries and data cleanup, plus **RugProbe** to check a Base token before trading. Each call is paid in USDC on Base via [x402](https://x402.org). There is no account, no API key and no subscription.
+Give Claude, Cursor or any MCP client tools for reading the web, QR codes, Wikipedia summaries, NFT lookups on Base and data cleanup, plus **RugProbe** to check a Base token before trading. Each call is paid in USDC on Base via [x402](https://x402.org). There is no account, no API key and no subscription.
 
 | Tool | What it returns | Price |
 |---|---|---|
@@ -16,6 +16,7 @@ Give Claude, Cursor or any MCP client tools for reading the web, QR codes, Wikip
 | `weblens_json_repair` | Fix broken LLM JSON and validate it against a schema | $0.002 |
 | `weblens_qr` | QR code from any text or URL, as SVG or PNG | $0.002 |
 | `weblens_wiki_summary` | Wikipedia summary of any topic, any language, with attribution | $0.002 |
+| `weblens_nft` | NFT on Base: owner, collection, metadata (name, image, attributes) | $0.002 |
 
 ## Setup
 
